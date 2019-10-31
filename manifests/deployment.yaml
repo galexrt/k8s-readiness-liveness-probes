@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-readiness-liveness-probes
+  labels:
+    app: k8s-readiness-liveness-probes
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8s-readiness-liveness-probes
+  template:
+    metadata:
+      labels:
+        app: k8s-readiness-liveness-probes
+    spec:
+      containers:
+      - name: application
+        image: galexrt/k8s-readiness-liveness-probes:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 8080
+            # Need to give a custom header?
+            #httpHeaders:
+            #- name: Custom-Header
+            #  value: Awesome
+          # Delay before the probe is executed first
+          initialDelaySeconds: 2
+          # Interval between each probe execution
+          periodSeconds: 3
+          # Timeout for the probe
+          timeoutSeconds: 1
+          # "Minimum consecutive successes for the probe"
+          # before it is considered a success
+          successThreshold: 1
+          # Consecutive failures of the probe, before
+          # the Pod is livenessProbe restarted and
+          # readinessProbe marked Unready.
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
