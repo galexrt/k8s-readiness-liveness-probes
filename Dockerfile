@@ -1,11 +1,11 @@
-FROM golang:1.13.3-buster AS build
+FROM golang:1.14.2-buster AS build
 
 ADD . /src
 
 RUN cd /src && \
     go build -o application ./cmd/application/
 
-FROM alpine
+FROM alpine:3.11.5
 
 # Fix that glibc binaries can run
 RUN mkdir -p /lib64 && \
